@@ -3,330 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latchwork Technical Documentation</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #64748b;
-            --bg: #ffffff;
-            --bg-alt: #f8fafc;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --code-bg: #f1f5f9;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.7;
-            color: var(--text);
-            background: var(--bg);
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-        }
-        
-        .sidebar {
-            width: 300px;
-            background: var(--bg-alt);
-            border-right: 1px solid var(--border);
-            padding: 2rem 1.5rem;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            top: 0;
-        }
-        
-        .sidebar-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .sidebar-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .toc-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-light);
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        
-        .toc { list-style: none; }
-        .toc li { margin: 0.25rem 0; }
-        
-        .toc a {
-            display: block;
-            color: var(--text);
-            text-decoration: none;
-            padding: 0.4rem 0.5rem;
-            border-radius: 0.375rem;
-            font-size: 0.9rem;
-            transition: all 0.15s;
-        }
-        
-        .toc a:hover {
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--primary);
-        }
-        
-        .toc-h1 { font-weight: 600; }
-        .toc-h2 { padding-left: 1rem !important; font-size: 0.85rem !important; }
-        .toc-h3 { padding-left: 2rem !important; font-size: 0.8rem !important; color: var(--text-light); }
-        
-        .main {
-            margin-left: 300px;
-            flex: 1;
-            padding: 3rem 4rem;
-            max-width: 900px;
-        }
-        
-        @media (max-width: 1100px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; padding: 2rem; }
-        }
-        
-        .report-header {
-            text-align: center;
-            padding: 2rem 0 3rem;
-            border-bottom: 2px solid var(--border);
-            margin-bottom: 3rem;
-        }
-        
-        .report-header h1 {
-            font-size: 2.75rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-        
-        .report-header .subtitle {
-            font-size: 1.35rem;
-            color: var(--secondary);
-            font-style: italic;
-            margin-bottom: 1.5rem;
-        }
-        
-        .report-header .meta {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        
-        .report-header .author {
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .tags {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .tag {
-            background: var(--primary);
-            color: white;
-            padding: 0.35rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-weight: 600;
-        }
-        
-        .main h1 {
-            font-size: 1.875rem;
-            margin: 3rem 0 1.25rem;
-            color: var(--primary-dark);
-            font-weight: 700;
-            letter-spacing: -0.01em;
-        }
-        
-        .main h2 {
-            font-size: 1.4rem;
-            margin: 2.5rem 0 1rem;
-            color: var(--primary);
-            font-weight: 600;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .main h3 {
-            font-size: 1.15rem;
-            margin: 2rem 0 0.75rem;
-            color: var(--text);
-            font-weight: 600;
-        }
-        
-        .main h4 {
-            font-size: 1.05rem;
-            margin: 1.5rem 0 0.5rem;
-            color: var(--text);
-            font-weight: 600;
-        }
-        
-        .main p {
-            margin-bottom: 1.1rem;
-            text-align: left;
-        }
-        
-        .main ul, .main ol {
-            margin: 1rem 0 1rem 1.5rem;
-        }
-        
-        .main li { margin: 0.5rem 0; }
-        
-        .main pre {
-            background: var(--code-bg);
-            padding: 1.25rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            border: 1px solid var(--border);
-            margin: 1.25rem 0;
-        }
-        
-        .main code {
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
-            font-size: 0.9em;
-        }
-        
-        .main pre code {
-            background: none;
-            padding: 0;
-            font-size: 0.85rem;
-            line-height: 1.6;
-        }
-        
-        .main p code {
-            background: var(--code-bg);
-            padding: 0.15rem 0.4rem;
-            border-radius: 0.25rem;
-            color: var(--primary-dark);
-        }
-        
-        .main table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-            font-size: 0.95rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        
-        .main th, .main td {
-            padding: 0.875rem 1rem;
-            text-align: left;
-            border: 1px solid var(--border);
-        }
-        
-        .main th {
-            background: var(--bg-alt);
-            font-weight: 600;
-            color: var(--primary-dark);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-        
-        .main tr:nth-child(even) { background: #fafbfc; }
-        
-        .info-box {
-            background: #eff6ff;
-            border-left: 4px solid var(--primary);
-            padding: 1.25rem 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
-        
-        .info-box-title {
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-        
-        .warning-box {
-            background: #fffbeb;
-            border-left-color: #f59e0b;
-        }
-        .warning-box .info-box-title { color: #b45309; }
-        
-        .tip-box {
-            background: #f0fdf4;
-            border-left-color: #22c55e;
-        }
-        .tip-box .info-box-title { color: #15803d; }
-        
-        .report-footer {
-            margin-top: 5rem;
-            padding: 2rem;
-            border-top: 1px solid var(--border);
-            text-align: center;
-            color: var(--text-light);
-            font-size: 0.875rem;
-            background: var(--bg-alt);
-            border-radius: 0.5rem;
-        }
-        
-        @media print {
-            .sidebar { display: none; }
-            .main { margin-left: 0; max-width: none; }
-        }
-        
-        a { color: var(--primary); }
-        a:hover { color: var(--primary-dark); }
-        
-        h1[id], h2[id], h3[id] { scroll-margin-top: 2rem; }
-    </style>
+    <title>Latchwork Technical Report</title>
+    <meta name="description" content="Latchwork Technical Report">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <div class="container">
         <nav class="sidebar">
             <div class="sidebar-title">Latchwork</div>
-            <div class="sidebar-subtitle">Technical Documentation</div>
+            <div class="sidebar-subtitle">Technical Report</div>
             <div class="toc-title">Contents</div>
             <ul class="toc">
-                <li class="toc-h1"><a href="#table-of-contents">Table of Contents</a></li>
-                <li class="toc-h1"><a href="#1-introduction-to-latchwork	3">1. Introduction to Latchwork	3</a></li>
-                <li class="toc-h1"><a href="#2-tutorials	4">2. Tutorials	4</a></li>
-                <li class="toc-h2"><a href="#21-getting-started-with-your-first-agent	4">2.1 Getting Started with Your First Agent	4</a></li>
-                <li class="toc-h2"><a href="#22-creating-a-slot-monitoring-agent	6">2.2 Creating a Slot-Monitoring Agent	6</a></li>
-                <li class="toc-h2"><a href="#23-building-a-payment-enabled-workflow	8">2.3 Building a Payment-Enabled Workflow	8</a></li>
-                <li class="toc-h1"><a href="#3-how-to-guides	10">3. How-to Guides	10</a></li>
-                <li class="toc-h2"><a href="#31-how-to-configure-agent-authentication	10">3.1 How to Configure Agent Authentication	10</a></li>
-                <li class="toc-h2"><a href="#32-how-to-set-up-micropayments-with-x402	12">3.2 How to Set Up Micropayments with x402	12</a></li>
-                <li class="toc-h2"><a href="#33-how-to-implement-human-in-the-loop-gates	14">3.3 How to Implement Human-in-the-Loop Gates	14</a></li>
-                <li class="toc-h2"><a href="#34-how-to-deploy-agents-to-production	16">3.4 How to Deploy Agents to Production	16</a></li>
-                <li class="toc-h1"><a href="#4-reference	18">4. Reference	18</a></li>
-                <li class="toc-h2"><a href="#41-agent-configuration-schema	18">4.1 Agent Configuration Schema	18</a></li>
-                <li class="toc-h2"><a href="#42-api-endpoints	20">4.2 API Endpoints	20</a></li>
-                <li class="toc-h2"><a href="#43-state-machine-transitions	22">4.3 State Machine Transitions	22</a></li>
-                <li class="toc-h2"><a href="#44-error-codes-and-troubleshooting	24">4.4 Error Codes and Troubleshooting	24</a></li>
-                <li class="toc-h1"><a href="#5-explanation	26">5. Explanation	26</a></li>
-                <li class="toc-h2"><a href="#51-understanding-the-monitor-commit-pattern	26">5.1 Understanding the Monitor-Commit Pattern	26</a></li>
-                <li class="toc-h2"><a href="#52-the-trust-layer-staking-and-validation	28">5.2 The Trust Layer: Staking and Validation	28</a></li>
-                <li class="toc-h2"><a href="#53-session-isolation-and-security	30">5.3 Session Isolation and Security	30</a></li>
-                <li class="toc-h2"><a href="#54-economic-model-and-incentive-design	32">5.4 Economic Model and Incentive Design	32</a></li>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 <li class="toc-h1"><a href="#1-introduction-to-latchwork">1. Introduction to Latchwork</a></li>
                 <li class="toc-h1"><a href="#2-tutorials">2. Tutorials</a></li>
                 <li class="toc-h2"><a href="#21-getting-started-with-your-first-agent">2.1 Getting Started with Your First Agent</a></li>
@@ -353,11 +61,15 @@
         
         <main class="main">
             <header class="report-header">
+                <div class="eyebrow">Technical Report</div>
                 <h1>Latchwork</h1>
-                <div class="subtitle">Technical Documentation</div>
+                <div class="subtitle">A Paid-Actions Network for Autonomous Agents</div>
                 <div class="meta">
-                    <span class="author">Abel Ngeno</span> — Technical Author | Full-stack Developer | Health Informatics Specialist<br>
-                    August 2025
+                    <span class="author">Abel Ngeno</span>
+                    <span class="meta-sep">&bull;</span>
+                    <span>Technical Author | Full-stack Developer | Health Informatics Specialist</span>
+                    <span class="meta-sep">&bull;</span>
+                    <span>August 2025</span>
                 </div>
                 <div class="tags">
                     <span class="tag">Tutorials</span>
@@ -365,8 +77,11 @@
                     <span class="tag">Reference</span>
                     <span class="tag">Explanation</span>
                 </div>
+                <div class="cta-row">
+                    <a class="cta" href="Latchwork_Technical_Documentation.docx">Download DOCX</a>
+                </div>
             </header>
-<p>A Paid-Actions Network for Autonomous Agents</p><p>Technical Author | Full-stack developer| Health Informatics Specialist</p><h1 id="table-of-contents">Table of Contents</h1><h1 id="1-introduction-to-latchwork	3">1. Introduction to Latchwork	3</h1><h1 id="2-tutorials	4">2. Tutorials	4</h1><h2 id="21-getting-started-with-your-first-agent	4">2.1 Getting Started with Your First Agent	4</h2><h2 id="22-creating-a-slot-monitoring-agent	6">2.2 Creating a Slot-Monitoring Agent	6</h2><h2 id="23-building-a-payment-enabled-workflow	8">2.3 Building a Payment-Enabled Workflow	8</h2><h1 id="3-how-to-guides	10">3. How-to Guides	10</h1><h2 id="31-how-to-configure-agent-authentication	10">3.1 How to Configure Agent Authentication	10</h2><h2 id="32-how-to-set-up-micropayments-with-x402	12">3.2 How to Set Up Micropayments with x402	12</h2><h2 id="33-how-to-implement-human-in-the-loop-gates	14">3.3 How to Implement Human-in-the-Loop Gates	14</h2><h2 id="34-how-to-deploy-agents-to-production	16">3.4 How to Deploy Agents to Production	16</h2><h1 id="4-reference	18">4. Reference	18</h1><h2 id="41-agent-configuration-schema	18">4.1 Agent Configuration Schema	18</h2><h2 id="42-api-endpoints	20">4.2 API Endpoints	20</h2><h2 id="43-state-machine-transitions	22">4.3 State Machine Transitions	22</h2><h2 id="44-error-codes-and-troubleshooting	24">4.4 Error Codes and Troubleshooting	24</h2><h1 id="5-explanation	26">5. Explanation	26</h1><h2 id="51-understanding-the-monitor-commit-pattern	26">5.1 Understanding the Monitor-Commit Pattern	26</h2><h2 id="52-the-trust-layer-staking-and-validation	28">5.2 The Trust Layer: Staking and Validation	28</h2><h2 id="53-session-isolation-and-security	30">5.3 Session Isolation and Security	30</h2><h2 id="54-economic-model-and-incentive-design	32">5.4 Economic Model and Incentive Design	32</h2><p>(Hint: Right-click and select "Update Field" to refresh page numbers)</p><h1 id="1-introduction-to-latchwork">1. Introduction to Latchwork</h1><table>
+<h1 id="1-introduction-to-latchwork">1. Introduction to Latchwork</h1><table>
   <tr>
     <th>Type</th>
     <th>Purpose</th>
