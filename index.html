@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latchwork Technical Documentation</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --bg: #ffffff;
+            --bg-alt: #f8fafc;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #f1f5f9;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--bg);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: var(--bg-alt);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            top: 0;
+        }
+        
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .toc-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .toc { list-style: none; }
+        .toc li { margin: 0.25rem 0; }
+        
+        .toc a {
+            display: block;
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.4rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+            transition: all 0.15s;
+        }
+        
+        .toc a:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+        
+        .toc-h1 { font-weight: 600; }
+        .toc-h2 { padding-left: 1rem !important; font-size: 0.85rem !important; }
+        .toc-h3 { padding-left: 2rem !important; font-size: 0.8rem !important; color: var(--text-light); }
+        
+        .main {
+            margin-left: 300px;
+            flex: 1;
+            padding: 3rem 4rem;
+            max-width: 900px;
+        }
+        
+        @media (max-width: 1100px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 2rem; }
+        }
+        
+        .report-header {
+            text-align: center;
+            padding: 2rem 0 3rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 3rem;
+        }
+        
+        .report-header h1 {
+            font-size: 2.75rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .report-header .subtitle {
+            font-size: 1.35rem;
+            color: var(--secondary);
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+        
+        .report-header .meta {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .report-header .author {
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .tags {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+        
+        .main h1 {
+            font-size: 1.875rem;
+            margin: 3rem 0 1.25rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        
+        .main h2 {
+            font-size: 1.4rem;
+            margin: 2.5rem 0 1rem;
+            color: var(--primary);
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .main h3 {
+            font-size: 1.15rem;
+            margin: 2rem 0 0.75rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        .main h4 {
+            font-size: 1.05rem;
+            margin: 1.5rem 0 0.5rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        .main p {
+            margin-bottom: 1.1rem;
+            text-align: left;
+        }
+        
+        .main ul, .main ol {
+            margin: 1rem 0 1rem 1.5rem;
+        }
+        
+        .main li { margin: 0.5rem 0; }
+        
+        .main pre {
+            background: var(--code-bg);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 1.25rem 0;
+        }
+        
+        .main code {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
+            font-size: 0.9em;
+        }
+        
+        .main pre code {
+            background: none;
+            padding: 0;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        
+        .main p code {
+            background: var(--code-bg);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            color: var(--primary-dark);
+        }
+        
+        .main table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .main th, .main td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+        
+        .main th {
+            background: var(--bg-alt);
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        
+        .main tr:nth-child(even) { background: #fafbfc; }
+        
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .info-box-title {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        
+        .warning-box {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+        }
+        .warning-box .info-box-title { color: #b45309; }
+        
+        .tip-box {
+            background: #f0fdf4;
+            border-left-color: #22c55e;
+        }
+        .tip-box .info-box-title { color: #15803d; }
+        
+        .report-footer {
+            margin-top: 5rem;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            background: var(--bg-alt);
+            border-radius: 0.5rem;
+        }
+        
+        @media print {
+            .sidebar { display: none; }
+            .main { margin-left: 0; max-width: none; }
+        }
+        
+        a { color: var(--primary); }
+        a:hover { color: var(--primary-dark); }
+        
+        h1[id], h2[id], h3[id] { scroll-margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-title">Latchwork</div>
+            <div class="sidebar-subtitle">Technical Documentation</div>
+            <div class="toc-title">Contents</div>
+            <ul class="toc">
+                <li class="toc-h1"><a href="#table-of-contents">Table of Contents</a></li>
+                <li class="toc-h1"><a href="#1-introduction-to-latchwork	3">1. Introduction to Latchwork	3</a></li>
+                <li class="toc-h1"><a href="#2-tutorials	4">2. Tutorials	4</a></li>
+                <li class="toc-h2"><a href="#21-getting-started-with-your-first-agent	4">2.1 Getting Started with Your First Agent	4</a></li>
+                <li class="toc-h2"><a href="#22-creating-a-slot-monitoring-agent	6">2.2 Creating a Slot-Monitoring Agent	6</a></li>
+                <li class="toc-h2"><a href="#23-building-a-payment-enabled-workflow	8">2.3 Building a Payment-Enabled Workflow	8</a></li>
+                <li class="toc-h1"><a href="#3-how-to-guides	10">3. How-to Guides	10</a></li>
+                <li class="toc-h2"><a href="#31-how-to-configure-agent-authentication	10">3.1 How to Configure Agent Authentication	10</a></li>
+                <li class="toc-h2"><a href="#32-how-to-set-up-micropayments-with-x402	12">3.2 How to Set Up Micropayments with x402	12</a></li>
+                <li class="toc-h2"><a href="#33-how-to-implement-human-in-the-loop-gates	14">3.3 How to Implement Human-in-the-Loop Gates	14</a></li>
+                <li class="toc-h2"><a href="#34-how-to-deploy-agents-to-production	16">3.4 How to Deploy Agents to Production	16</a></li>
+                <li class="toc-h1"><a href="#4-reference	18">4. Reference	18</a></li>
+                <li class="toc-h2"><a href="#41-agent-configuration-schema	18">4.1 Agent Configuration Schema	18</a></li>
+                <li class="toc-h2"><a href="#42-api-endpoints	20">4.2 API Endpoints	20</a></li>
+                <li class="toc-h2"><a href="#43-state-machine-transitions	22">4.3 State Machine Transitions	22</a></li>
+                <li class="toc-h2"><a href="#44-error-codes-and-troubleshooting	24">4.4 Error Codes and Troubleshooting	24</a></li>
+                <li class="toc-h1"><a href="#5-explanation	26">5. Explanation	26</a></li>
+                <li class="toc-h2"><a href="#51-understanding-the-monitor-commit-pattern	26">5.1 Understanding the Monitor-Commit Pattern	26</a></li>
+                <li class="toc-h2"><a href="#52-the-trust-layer-staking-and-validation	28">5.2 The Trust Layer: Staking and Validation	28</a></li>
+                <li class="toc-h2"><a href="#53-session-isolation-and-security	30">5.3 Session Isolation and Security	30</a></li>
+                <li class="toc-h2"><a href="#54-economic-model-and-incentive-design	32">5.4 Economic Model and Incentive Design	32</a></li>
+                <li class="toc-h1"><a href="#1-introduction-to-latchwork">1. Introduction to Latchwork</a></li>
+                <li class="toc-h1"><a href="#2-tutorials">2. Tutorials</a></li>
+                <li class="toc-h2"><a href="#21-getting-started-with-your-first-agent">2.1 Getting Started with Your First Agent</a></li>
+                <li class="toc-h2"><a href="#22-creating-a-slot-monitoring-agent">2.2 Creating a Slot-Monitoring Agent</a></li>
+                <li class="toc-h2"><a href="#23-building-a-payment-enabled-workflow">2.3 Building a Payment-Enabled Workflow</a></li>
+                <li class="toc-h1"><a href="#3-how-to-guides">3. How-to Guides</a></li>
+                <li class="toc-h2"><a href="#31-how-to-configure-agent-authentication">3.1 How to Configure Agent Authentication</a></li>
+                <li class="toc-h2"><a href="#32-how-to-set-up-micropayments-with-x402">3.2 How to Set Up Micropayments with x402</a></li>
+                <li class="toc-h2"><a href="#33-how-to-implement-human-in-the-loop-gates">3.3 How to Implement Human-in-the-Loop Gates</a></li>
+                <li class="toc-h2"><a href="#34-how-to-deploy-agents-to-production">3.4 How to Deploy Agents to Production</a></li>
+                <li class="toc-h1"><a href="#4-reference">4. Reference</a></li>
+                <li class="toc-h2"><a href="#41-agent-configuration-schema">4.1 Agent Configuration Schema</a></li>
+                <li class="toc-h2"><a href="#42-api-endpoints">4.2 API Endpoints</a></li>
+                <li class="toc-h2"><a href="#43-state-machine-transitions">4.3 State Machine Transitions</a></li>
+                <li class="toc-h2"><a href="#44-error-codes-and-troubleshooting">4.4 Error Codes and Troubleshooting</a></li>
+                <li class="toc-h1"><a href="#5-explanation">5. Explanation</a></li>
+                <li class="toc-h2"><a href="#51-understanding-the-monitor-commit-pattern">5.1 Understanding the Monitor-Commit Pattern</a></li>
+                <li class="toc-h2"><a href="#52-the-trust-layer-staking-and-validation">5.2 The Trust Layer: Staking and Validation</a></li>
+                <li class="toc-h2"><a href="#53-session-isolation-and-security">5.3 Session Isolation and Security</a></li>
+                <li class="toc-h2"><a href="#54-economic-model-and-incentive-design">5.4 Economic Model and Incentive Design</a></li>
+                <li class="toc-h2"><a href="#payment-flow">Payment Flow</a></li>
+            </ul>
+        </nav>
+        
+        <main class="main">
+            <header class="report-header">
+                <h1>Latchwork</h1>
+                <div class="subtitle">Technical Documentation</div>
+                <div class="meta">
+                    <span class="author">Abel Ngeno</span> — Technical Author | Full-stack Developer | Health Informatics Specialist<br>
+                    August 2025
+                </div>
+                <div class="tags">
+                    <span class="tag">Tutorials</span>
+                    <span class="tag">How-to Guides</span>
+                    <span class="tag">Reference</span>
+                    <span class="tag">Explanation</span>
+                </div>
+            </header>
+<p>A Paid-Actions Network for Autonomous Agents</p><p>Technical Author | Full-stack developer| Health Informatics Specialist</p><h1 id="table-of-contents">Table of Contents</h1><h1 id="1-introduction-to-latchwork	3">1. Introduction to Latchwork	3</h1><h1 id="2-tutorials	4">2. Tutorials	4</h1><h2 id="21-getting-started-with-your-first-agent	4">2.1 Getting Started with Your First Agent	4</h2><h2 id="22-creating-a-slot-monitoring-agent	6">2.2 Creating a Slot-Monitoring Agent	6</h2><h2 id="23-building-a-payment-enabled-workflow	8">2.3 Building a Payment-Enabled Workflow	8</h2><h1 id="3-how-to-guides	10">3. How-to Guides	10</h1><h2 id="31-how-to-configure-agent-authentication	10">3.1 How to Configure Agent Authentication	10</h2><h2 id="32-how-to-set-up-micropayments-with-x402	12">3.2 How to Set Up Micropayments with x402	12</h2><h2 id="33-how-to-implement-human-in-the-loop-gates	14">3.3 How to Implement Human-in-the-Loop Gates	14</h2><h2 id="34-how-to-deploy-agents-to-production	16">3.4 How to Deploy Agents to Production	16</h2><h1 id="4-reference	18">4. Reference	18</h1><h2 id="41-agent-configuration-schema	18">4.1 Agent Configuration Schema	18</h2><h2 id="42-api-endpoints	20">4.2 API Endpoints	20</h2><h2 id="43-state-machine-transitions	22">4.3 State Machine Transitions	22</h2><h2 id="44-error-codes-and-troubleshooting	24">4.4 Error Codes and Troubleshooting	24</h2><h1 id="5-explanation	26">5. Explanation	26</h1><h2 id="51-understanding-the-monitor-commit-pattern	26">5.1 Understanding the Monitor-Commit Pattern	26</h2><h2 id="52-the-trust-layer-staking-and-validation	28">5.2 The Trust Layer: Staking and Validation	28</h2><h2 id="53-session-isolation-and-security	30">5.3 Session Isolation and Security	30</h2><h2 id="54-economic-model-and-incentive-design	32">5.4 Economic Model and Incentive Design	32</h2><p>(Hint: Right-click and select "Update Field" to refresh page numbers)</p><h1 id="1-introduction-to-latchwork">1. Introduction to Latchwork</h1><table>
+  <tr>
+    <th>Type</th>
+    <th>Purpose</th>
+    <th>User State</th>
+  </tr>
+  <tr>
+    <td>Tutorials</td>
+    <td>Learning-oriented lessons that take users through practical experiences</td>
+    <td>Studying - needs guidance</td>
+  </tr>
+  <tr>
+    <td>How-to Guides</td>
+    <td>Goal-oriented directions for solving real-world problems</td>
+    <td>Working - needs answers</td>
+  </tr>
+  <tr>
+    <td>Reference</td>
+    <td>Information-oriented technical descriptions for accurate usage</td>
+    <td>Working - needs facts</td>
+  </tr>
+  <tr>
+    <td>Explanation</td>
+    <td>Understanding-oriented discussions that illuminate concepts</td>
+    <td>Studying - needs insight</td>
+  </tr>
+</table>
+<p>Latchwork is a paid-actions network designed for autonomous agents that need to interact with slot-scarcity and paperwork-heavy portals. It addresses the fundamental challenges of automating tasks on websites that were never designed for programmatic access, such as visa appointment systems, healthcare scheduling portals, government compliance sites, and financial onboarding (KYC) platforms.</p><p>Core Problem:Traditional automation tools (RPA, browser automation) fail in high-stakes scenarios because they lack trust mechanisms, proof-of-execution, and economic incentives. When an agent books a visa appointment or submits a government form, how do you know it actually succeeded? How do you resolve disputes? How do you handle payments?</p><p>Key Primitives</p><ul><li>Native Micropayments (HTTP x402): Agents can pay for access, prioritize requests, and handle paywalled resources programmatically</li><li>Deterministic FSM Execution: State machine-based workflows ensure predictable, replayable, and verifiable agent behavior</li><li>Monitor-Commit Coalescing: Efficient resource usage by separating lightweight monitoring from expensive commit actions</li><li>Human-in-the-Loop Gates: Graceful handling of CAPTCHAs, approvals, and exceptional cases requiring human judgment</li><li>Proof-of-Execution Artifacts: Cryptographically verifiable logs, screenshots, and state transitions for audit and dispute resolution</li><li>Trust Layers: Staking, validation, and insurance mechanisms to align incentives and guarantee outcomes</li><li>Session Isolation: Secure, ephemeral execution environments that prevent data leakage and unauthorized access</li></ul><p>Documentation Structure (Diátaxis Framework)</p><p>This documentation follows the Diátaxis framework, organizing content into four distinct types that serve different user needs:</p><h1 id="2-tutorials">2. Tutorials</h1><p>Learning-oriented lessons that guide you through practical experiences with Latchwork</p><h2 id="21-getting-started-with-your-first-agent">2.1 Getting Started with Your First Agent</h2><p>Prerequisites: Node.js 18+, Git, basic JavaScript knowledge</p><p>In this tutorial, you'll create your first Latchwork agent that monitors a website for changes and takes action when specific conditions are met. By the end, you'll understand the core concepts of agent configuration, state management, and execution.</p><p>Step 1: Install the Latchwork CLI</p><p>npm install -g @latchwork/cli</p><p>Step 2: Initialize a New Project</p><p>latchwork init my-first-agent
+cd my-first-agent
+npm install</p><p>This creates a project structure with:</p><ul><li>agent.yaml - Main configuration file</li><li>src/ - Source code directory</li><li>tests/ - Test files</li><li>docs/ - Documentation folder</li></ul><p>Step 3: Define Your Agent Configuration</p><p>Edit agent.yaml to define your agent's behavior:</p><p>name: website-monitor
+version: 1.0.0
+description: Monitor example.com for changes
+
+states:
+  - id: idle
+    type: initial
+    
+  - id: checking
+    action: fetch
+    config:
+      url: https://example.com/status
+      method: GET
+      
+  - id: analyzing
+    action: evaluate
+    config:
+      condition: response.status == 'available'
+      
+  - id: notifying
+    action: webhook
+    config:
+      url: https://my-app.com/webhook
+      payload:
+        message: 'Slot is available!'
+
+transitions:
+  - from: idle
+    to: checking
+    trigger: interval
+    config:
+      seconds: 60
+      
+  - from: checking
+    to: analyzing
+    trigger: complete
+    
+  - from: analyzing
+    to: notifying
+    condition: result == true
+    
+  - from: analyzing
+    to: idle
+    condition: result == false</p><p>Step 4: Run Your Agent Locally</p><p>latchwork run --watch</p><p>The --watch flag enables live reloading. As you edit agent.yaml, the agent will restart automatically.</p><p>Step 5: Verify Execution</p><p>Open the Latchwork dashboard at http://localhost:3000 to see your agent's execution trace, state transitions, and logs.</p><p>What You've Learned
+• How to install and configure the Latchwork CLI
+• The structure of an agent configuration file
+• How to define states and transitions
+• How to run and monitor agents locally</p><h2 id="22-creating-a-slot-monitoring-agent">2.2 Creating a Slot-Monitoring Agent</h2><p>Prerequisites: Completed Tutorial 2.1, Playwright basics</p><p>This tutorial builds on the basics to create a more sophisticated agent that monitors a visa appointment portal for available slots and automatically books when one opens. This demonstrates the monitor-commit pattern that is central to Latchwork's efficiency.</p><p>Understanding the Monitor-Commit Pattern</p><p>The key insight is that checking for slot availability is cheap, but booking is expensive (requires form filling, payment, etc.). Latchwork separates these concerns:</p><ul><li>Monitor Phase: Lightweight, frequent checks (every few seconds)</li><li>Commit Phase: Full execution only when conditions are met</li><li>Coalescing: Thousands of checks can result in a single commit</li></ul><p>Agent Configuration</p><p>name: visa-slot-monitor
+version: 1.0.0
+description: Monitor and book visa appointments
+
+# Monitor phase - lightweight checking
+states:
+  - id: monitor
+    type: initial
+    action: browser.check
+    config:
+      url: https://visa-portal.gov/appointments
+      selector: '.slot-availability'
+      extract: text
+      
+  - id: evaluate
+    action: condition
+    config:
+      expression: extract.includes('Available')
+      
+  # Commit phase - full booking workflow
+  - id: login
+    action: browser.fill
+    config:
+      selectors:
+        '#username': '{{secrets.username}}'
+        '#password': '{{secrets.password}}'
+      submit: '#login-btn'
+      
+  - id: select-slot
+    action: browser.click
+    config:
+      selector: '.available-slot:first'
+      
+  - id: confirm
+    action: browser.click
+    config:
+      selector: '#confirm-booking'
+      
+  - id: capture-proof
+    action: screenshot
+    config:
+      selector: '.confirmation-page'
+      store: true
+
+transitions:
+  # Monitor loop
+  - from: monitor
+    to: evaluate
+    trigger: complete
+    
+  - from: evaluate
+    to: monitor
+    condition: result == false
+    trigger: timer
+    config:
+      seconds: 5
+      
+  # Commit path (when slot available)
+  - from: evaluate
+    to: login
+    condition: result == true
+    
+  - from: login
+    to: select-slot
+    trigger: complete
+    
+  - from: select-slot
+    to: confirm
+    trigger: complete
+    
+  - from: confirm
+    to: capture-proof
+    trigger: complete</p><p>Key Concept
+The monitor state runs every 5 seconds (lightweight), but the commit states (login through capture-proof) only execute once when a slot becomes available. This is the essence of efficient automation.</p><h2 id="23-building-a-payment-enabled-workflow">2.3 Building a Payment-Enabled Workflow</h2><p>Prerequisites: Completed Tutorial 2.2, x402 wallet setup</p><p>This tutorial demonstrates how to integrate micropayments into your agent workflows using the HTTP x402 protocol. You'll build an agent that can pay for priority access to a service.</p><p>Setting Up x402 Payment</p><p>states:
+  - id: request-access
+    action: http.request
+    config:
+      url: https://api.service.com/priority-access
+      headers:
+        Accept: application/x402+json
+        
+  - id: handle-payment-required
+    action: x402.pay
+    config:
+      wallet: '{{secrets.wallet_key}}'
+      max_amount: 0.50
+      currency: USDC
+      
+  - id: confirm-access
+    action: http.request
+    config:
+      url: '{{payment_response.confirmation_url}}'
+      headers:
+        Authorization: 'x402 {{payment_response.token}}'</p><p>x402 Protocol
+HTTP x402 is an emerging standard for internet-native micropayments. When a server returns a 402 Payment Required status, it includes payment requirements. The client can then automatically fulfill the payment and retry the request with the payment proof.</p><h1 id="3-how-to-guides">3. How-to Guides</h1><p>Goal-oriented directions for solving specific problems with Latchwork</p><h2 id="31-how-to-configure-agent-authentication">3.1 How to Configure Agent Authentication</h2><p>Most agents need to authenticate with target services. Latchwork provides secure credential management through its secrets system.</p><p>Step 1: Store Credentials Securely</p><p>latchwork secrets set visa-portal.username
+Enter value: ********
+
+latchwork secrets set visa-portal.password
+Enter value: ********</p><p>Step 2: Reference in Agent Configuration</p><p>states:
+  - id: login
+    action: browser.fill
+    config:
+      selectors:
+        '#username': '{{secrets.visa-portal.username}}'
+        '#password': '{{secrets.visa-portal.password}}'
+      submit: '#login-button'</p><p>Step 3: Configure Session Persistence</p><p>session:
+  persistence: cookie-jar
+  cookie-jar:
+    name: visa-session
+    ttl: 3600  # 1 hour</p><p>Security Best Practice
+Never hardcode credentials in agent.yaml. Always use the secrets system. Credentials are encrypted at rest and only decrypted in the execution environment.</p><h2 id="32-how-to-set-up-micropayments-with-x402">3.2 How to Set Up Micropayments with x402</h2><table>
+  <tr>
+    <th>Field</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>id</td>
+    <td>string</td>
+    <td>Unique state identifier</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>enum</td>
+    <td>initial, terminal, or normal</td>
+  </tr>
+  <tr>
+    <td>action</td>
+    <td>string</td>
+    <td>Action to execute (e.g., browser.click)</td>
+  </tr>
+  <tr>
+    <td>config</td>
+    <td>object</td>
+    <td>Action-specific configuration</td>
+  </tr>
+  <tr>
+    <td>timeout</td>
+    <td>number</td>
+    <td>Maximum execution time in seconds</td>
+  </tr>
+  <tr>
+    <td>retries</td>
+    <td>number</td>
+    <td>Number of retry attempts on failure</td>
+  </tr>
+</table>
+<p>Configure Your Wallet</p><p>latchwork wallet import --name primary --chain base
+Enter private key: ********
+Wallet address: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb</p><p>Set Payment Limits</p><p>payment:
+  wallet: primary
+  limits:
+    per-transaction: 1.00
+    per-day: 10.00
+    per-week: 50.00
+  approved-merchants:
+    - visa-portal.gov
+    - booking-service.com</p><h2 id="33-how-to-implement-human-in-the-loop-gates">3.3 How to Implement Human-in-the-Loop Gates</h2><p>Some situations require human judgment. Latchwork's human-in-the-loop gates pause execution and wait for user input.</p><p>CAPTCHA Handling</p><p>states:
+  - id: detect-captcha
+    action: browser.detect
+    config:
+      selector: '.g-recaptcha, .h-captcha'
+      
+  - id: solve-captcha
+    action: human.gate
+    config:
+      type: captcha
+      timeout: 300
+      instructions: 'Please solve the CAPTCHA to continue'
+      
+  - id: resume
+    action: browser.continue
+    config:
+      wait_for: '#booking-confirmation'</p><p>Approval Gates for Sensitive Actions</p><p>states:
+  - id: before-payment
+    action: human.gate
+    config:
+      type: approval
+      title: 'Confirm Payment'
+      message: 'Agent wants to pay ${{amount}} to {{merchant}}. Approve?'
+      options:
+        - label: 'Approve'
+          value: approve
+        - label: 'Deny'
+          value: deny
+        - label: 'Approve Always'
+          value: approve-always</p><h2 id="34-how-to-deploy-agents-to-production">3.4 How to Deploy Agents to Production</h2><p>Build for Production</p><p>latchwork build --env production</p><p>Deploy to Latchwork Cloud</p><p>latchwork deploy --region us-east-1 --replicas 2</p><p>Configure Monitoring</p><p>monitoring:
+  alerts:
+    - condition: error_rate &gt; 0.05
+      channels: [email, slack]
+    - condition: execution_time &gt; 300
+      channels: [pagerduty]
+  dashboards:
+    - name: agent-health
+      metrics: [success_rate, avg_execution_time, queue_depth]</p><h1 id="4-reference">4. Reference</h1><p>Technical descriptions for accurate, complete, and reliable information</p><h2 id="41-agent-configuration-schema">4.1 Agent Configuration Schema</h2><table>
+  <tr>
+    <th>Field</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>name</td>
+    <td>string</td>
+    <td>Unique identifier for the agent</td>
+  </tr>
+  <tr>
+    <td>version</td>
+    <td>string</td>
+    <td>Semantic version (e.g., 1.0.0)</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>string</td>
+    <td>Human-readable description</td>
+  </tr>
+  <tr>
+    <td>states</td>
+    <td>array</td>
+    <td>List of state definitions</td>
+  </tr>
+  <tr>
+    <td>transitions</td>
+    <td>array</td>
+    <td>List of transition rules</td>
+  </tr>
+  <tr>
+    <td>session</td>
+    <td>object</td>
+    <td>Session configuration</td>
+  </tr>
+  <tr>
+    <td>payment</td>
+    <td>object</td>
+    <td>Payment and wallet settings</td>
+  </tr>
+  <tr>
+    <td>monitoring</td>
+    <td>object</td>
+    <td>Monitoring and alerting config</td>
+  </tr>
+</table>
+<p>The agent.yaml file defines your agent's structure, behavior, and execution flow.</p><p>State Object Schema</p><h2 id="42-api-endpoints">4.2 API Endpoints</h2><table>
+  <tr>
+    <th>Endpoint</th>
+    <th>Method</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>/api/v1/agents</td>
+    <td>GET</td>
+    <td>List all agents</td>
+  </tr>
+  <tr>
+    <td>/api/v1/agents</td>
+    <td>POST</td>
+    <td>Create new agent</td>
+  </tr>
+  <tr>
+    <td>/api/v1/agents/{id}</td>
+    <td>GET</td>
+    <td>Get agent details</td>
+  </tr>
+  <tr>
+    <td>/api/v1/agents/{id}</td>
+    <td>PUT</td>
+    <td>Update agent</td>
+  </tr>
+  <tr>
+    <td>/api/v1/agents/{id}</td>
+    <td>DELETE</td>
+    <td>Delete agent</td>
+  </tr>
+  <tr>
+    <td>/api/v1/agents/{id}/run</td>
+    <td>POST</td>
+    <td>Execute agent</td>
+  </tr>
+  <tr>
+    <td>/api/v1/agents/{id}/logs</td>
+    <td>GET</td>
+    <td>Get execution logs</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th>Endpoint</th>
+    <th>Method</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>/api/v1/executions</td>
+    <td>GET</td>
+    <td>List executions</td>
+  </tr>
+  <tr>
+    <td>/api/v1/executions/{id}</td>
+    <td>GET</td>
+    <td>Get execution status</td>
+  </tr>
+  <tr>
+    <td>/api/v1/executions/{id}/pause</td>
+    <td>POST</td>
+    <td>Pause execution</td>
+  </tr>
+  <tr>
+    <td>/api/v1/executions/{id}/resume</td>
+    <td>POST</td>
+    <td>Resume execution</td>
+  </tr>
+  <tr>
+    <td>/api/v1/executions/{id}/cancel</td>
+    <td>POST</td>
+    <td>Cancel execution</td>
+  </tr>
+</table>
+<p>Agent Management</p><p>Execution Control</p><h2 id="43-state-machine-transitions">4.3 State Machine Transitions</h2><table>
+  <tr>
+    <th>Trigger</th>
+    <th>Description</th>
+    <th>Use Case</th>
+  </tr>
+  <tr>
+    <td>complete</td>
+    <td>Action completed successfully</td>
+    <td>Sequential workflow steps</td>
+  </tr>
+  <tr>
+    <td>error</td>
+    <td>Action failed with error</td>
+    <td>Error handling paths</td>
+  </tr>
+  <tr>
+    <td>timer</td>
+    <td>Time-based trigger</td>
+    <td>Polling, delays</td>
+  </tr>
+  <tr>
+    <td>condition</td>
+    <td>Custom condition evaluated</td>
+    <td>Branching logic</td>
+  </tr>
+  <tr>
+    <td>webhook</td>
+    <td>External HTTP request</td>
+    <td>Event-driven triggers</td>
+  </tr>
+  <tr>
+    <td>human</td>
+    <td>Human input received</td>
+    <td>Human-in-the-loop gates</td>
+  </tr>
+</table>
+<p>Transitions define how the agent moves between states based on triggers and conditions.</p><h2 id="44-error-codes-and-troubleshooting">4.4 Error Codes and Troubleshooting</h2><table>
+  <tr>
+    <th>Error Code</th>
+    <th>Description</th>
+    <th>Resolution</th>
+  </tr>
+  <tr>
+    <td>AGENT_001</td>
+    <td>Invalid agent configuration</td>
+    <td>Validate YAML syntax and schema</td>
+  </tr>
+  <tr>
+    <td>AGENT_002</td>
+    <td>State not found</td>
+    <td>Check state IDs in transitions</td>
+  </tr>
+  <tr>
+    <td>EXEC_001</td>
+    <td>Execution timeout</td>
+    <td>Increase timeout or optimize action</td>
+  </tr>
+  <tr>
+    <td>EXEC_002</td>
+    <td>Max retries exceeded</td>
+    <td>Check target availability</td>
+  </tr>
+  <tr>
+    <td>AUTH_001</td>
+    <td>Authentication failed</td>
+    <td>Verify secrets are set correctly</td>
+  </tr>
+  <tr>
+    <td>PAY_001</td>
+    <td>Insufficient funds</td>
+    <td>Add funds to wallet</td>
+  </tr>
+  <tr>
+    <td>PAY_002</td>
+    <td>Payment rejected</td>
+    <td>Check merchant approval list</td>
+  </tr>
+  <tr>
+    <td>BROWSER_001</td>
+    <td>Element not found</td>
+    <td>Update selector or add wait</td>
+  </tr>
+  <tr>
+    <td>HUMAN_001</td>
+    <td>Human gate timeout</td>
+    <td>Increase timeout or handle differently</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th>Scenario</th>
+    <th>Resolution</th>
+  </tr>
+  <tr>
+    <td>Agent fails to execute</td>
+    <td>User refunded, agent stake slashed</td>
+  </tr>
+  <tr>
+    <td>Agent claims success but validator disagrees</td>
+    <td>Dispute resolution, loser penalized</td>
+  </tr>
+  <tr>
+    <td>Target site unavailable</td>
+    <td>No fault, user can retry</td>
+  </tr>
+  <tr>
+    <td>User cancels mid-execution</td>
+    <td>Partial refund based on progress</td>
+  </tr>
+</table>
+<h1 id="5-explanation">5. Explanation</h1><p>Understanding-oriented discussions that illuminate Latchwork's concepts and design decisions</p><h2 id="51-understanding-the-monitor-commit-pattern">5.1 Understanding the Monitor-Commit Pattern</h2><p>The monitor-commit pattern is one of Latchwork's core innovations, addressing a fundamental inefficiency in traditional automation approaches.</p><p>The Problem with Naive Automation</p><p>Consider booking a visa appointment. The naive approach would be to repeatedly attempt the full booking workflow: login, navigate, check availability, fill forms, submit. This is wasteful because:</p><ul><li>Each full attempt consumes significant resources (compute, time, API calls)</li><li>Most attempts fail because slots are rarely available</li><li>The expensive parts (form filling, payment) are done even when unnecessary</li></ul><p>The Monitor-Commit Solution</p><p>Latchwork separates the workflow into two phases:</p><p>Monitor Phase: Lightweight, frequent checks that determine if conditions are right for action. This might be a simple HTTP request or a quick page scrape. It's designed to be cheap and fast.</p><p>Commit Phase: The full, expensive workflow that only executes when the monitor detects the right conditions. This includes authentication, form filling, payment, and confirmation.</p><p>Economic Impact</p><p>In a typical scenario, an agent might check 1,000 times before a slot becomes available. With monitor-commit:</p><ul><li>Monitor cost: 1,000 checks × $0.0001 = $0.10</li><li>Commit cost: 1 execution × $0.50 = $0.50</li><li>Total: $0.60</li></ul><p>Without monitor-commit, each check would be a full execution: 1,000 × $0.50 = $500. The pattern reduces costs by 99.9% while maintaining responsiveness.</p><h2 id="52-the-trust-layer-staking-and-validation">5.2 The Trust Layer: Staking and Validation</h2><p>In a decentralized system where agents execute tasks on behalf of users, trust is paramount. How do you know an agent will do what it promises? How do you resolve disputes? Latchwork's trust layer addresses these questions through economic incentives and cryptographic verification.</p><p>Staking: Putting Skin in the Game</p><p>Agent developers stake tokens as collateral. If an agent fails to complete a task or behaves maliciously, the stake can be slashed (partially or fully forfeited). This creates a strong incentive for:</p><ul><li>Building reliable, well-tested agents</li><li>Accurately representing agent capabilities</li><li>Maintaining and updating agents as target sites change</li></ul><p>Validation: Independent Verification</p><p>Validators are independent nodes that replay agent executions to verify outcomes. They check:</p><ul><li>Did the agent follow the declared state machine?</li><li>Are the proof artifacts (screenshots, logs) genuine?</li><li>Did the claimed outcome actually occur?</li></ul><h2 id="53-session-isolation-and-security">5.3 Session Isolation and Security</h2><p>When running agents that handle sensitive data (credentials, personal information, payment details), security is critical. Latchwork's session isolation model provides defense in depth.</p><p>The Capsule Model</p><p>Each agent execution runs in an isolated "capsule" with the following properties:</p><ul><li>Ephemeral: Created at execution start, destroyed at completion</li><li>Isolated: No access to host filesystem, network restricted to allowlist</li><li>Stateless: No persistence between executions unless explicitly configured</li><li>Auditable: All actions logged with cryptographic hashes</li></ul><h2 id="54-economic-model-and-incentive-design">5.4 Economic Model and Incentive Design</h2><p>Latchwork's economic model is designed to align incentives across all participants: users, agent developers, validators, and infrastructure providers.</p><h2 id="payment-flow">Payment Flow</h2><p>When a user requests a task:</p><ul><li>User deposits payment into escrow</li><li>Agent executes the task</li><li>Validator verifies successful completion</li><li>Payment is released to agent developer</li><li>Validator receives verification fee</li></ul><p>Failure Scenarios</p>
+            <footer class="report-footer">
+                <p><strong>Latchwork Technical Documentation</strong></p>
+                <p>&copy; 2025 Abel Ngeno — Technical Author | Full-stack Developer | Health Informatics Specialist</p>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
